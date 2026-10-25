@@ -1,0 +1,16 @@
+# Render Blueprint: cria o servidor do Duelo no plano gratuito.
+services:
+  - type: web
+    name: duelo-presentes
+    runtime: node
+    plan: free
+    buildCommand: npm install --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /saude
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: TIKTOK_USERNAME
+        sync: false
+      - key: SENHA_PAINEL
+        sync: false

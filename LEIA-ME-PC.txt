@@ -1,0 +1,24 @@
+DUELO DE PRESENTES — NO PC (WINDOWS + OBS)
+==========================================
+(Para usar pelo iPad sem o PC, veja o arquivo IPAD-LIVE.md)
+
+PRIMEIRA VEZ
+1. Instale o Node.js (versão LTS): https://nodejs.org/pt
+2. Extraia esta pasta em um lugar fixo (ex: Documentos\Duelo).
+3. Dois cliques em INICIAR.bat. Ele instala o que precisa e pergunta seu @ do TikTok.
+
+NO OBS (uma vez)
+- Fontes > + > Navegador > URL: http://localhost:8080  (NÃO marque "Arquivo local")
+- Largura 1080, Altura 1920. Marque "Controlar áudio via OBS".
+
+TODA LIVE
+1. Dois cliques em INICIAR.bat (deixe a janela preta aberta). O painel abre sozinho.
+2. Comece a live. Quando conectar, o painel mostra "● Conectado na live".
+
+PAINEL (fotos, nomes, presentes, pontos, máximo, placar, simulação)
+- http://localhost:8080/admin   (no PC não pede senha)
+
+JÁ VEM CONFIGURADO
+- LADO A: Rosa branca +1  |  Rosquinha -10 (tira do A)
+- LADO B: Rosa +1         |  Capybara  -10 (tira do B)
+- Máximo 100.000 por lado, nunca abaixo de 0.

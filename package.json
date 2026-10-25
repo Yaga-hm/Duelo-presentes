@@ -1,0 +1,10 @@
+{
+  "name": "duelo-presentes",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Overlay de duelo por presentes para TikTok LIVE (PC ou nuvem)",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" },
+  "dependencies": { "tiktok-live-connector": "^2.4.0" }
+}

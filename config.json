@@ -1,0 +1,17 @@
+{
+  "usuario": "",
+  "titulo": "QUEM VENCE O DUELO?",
+  "maximo": 100000,
+  "som": true,
+  "fundoTransparente": false,
+  "lados": [
+    { "nome": "LADO A", "cor": "#1f6fff", "foto": "" },
+    { "nome": "LADO B", "cor": "#e53935", "foto": "" }
+  ],
+  "regras": [
+    { "presentes": "rosa branca, white rose", "lado": 0, "pontos": 1,   "icone": "rosabranca" },
+    { "presentes": "rosquinha, donut",        "lado": 0, "pontos": -10, "icone": "rosquinha" },
+    { "presentes": "rosa, rose",              "lado": 1, "pontos": 1,   "icone": "rosa" },
+    { "presentes": "capybara, capivara",      "lado": 1, "pontos": -10, "icone": "capybara" }
+  ]
+}

@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Duelo">
+<meta name="theme-color" content="#0b0d12">
+<link rel="apple-touch-icon" href="rosa.png">
+<title>Duelo de Presentes</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:none;-webkit-user-select:none;user-select:none;background:#0b0d12;font-family:"Arial Black","Segoe UI",Arial,sans-serif}
+  body.transp,body.transp #stage{background:transparent}
+  #stage{position:absolute;top:0;left:0;width:1080px;height:1920px;transform-origin:top left;overflow:hidden;
+    background:radial-gradient(1200px 800px at 50% 0%,#1d2a44 0%,#0b0d12 70%)}
+
+  /* ---------- título ---------- */
+  .title{height:96px;display:flex;align-items:center;justify-content:center;font-size:52px;color:#fff;font-style:italic;
+    text-shadow:0 5px 0 #1a3cff,0 0 30px rgba(26,60,255,.6)}
+
+  /* ---------- lados (fotos grandes) ---------- */
+  .heads{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;padding:0 20px}
+  .head{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0}
+  .photo{width:100%;height:700px;border-radius:36px;border:10px solid var(--c);background:#1a1f2b center/cover no-repeat;
+    display:flex;align-items:center;justify-content:center;font-size:260px;color:#fff;box-shadow:0 0 50px var(--c)}
+  .nm{font-size:60px;line-height:1;color:#fff;text-transform:uppercase;text-align:center;max-width:100%;
+    -webkit-text-stroke:3px var(--c);text-shadow:0 6px 0 rgba(0,0,0,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vs{position:absolute;left:50%;top:300px;transform:translateX(-50%);width:160px;height:160px;border-radius:50%;
+    background:#ffd400;border:8px solid #1a2a8a;display:flex;align-items:center;justify-content:center;
+    font-size:110px;line-height:1;color:#1a2a8a;font-style:italic;box-shadow:0 10px 30px rgba(0,0,0,.6);z-index:2}
+  .pills{display:flex;flex-direction:column;align-items:stretch;gap:12px;width:100%}
+  .pill{display:flex;align-items:center;justify-content:center;gap:12px;border-radius:24px;padding:8px 18px;font-size:36px;white-space:nowrap;overflow:hidden}
+  .pill img{height:66px;width:auto;margin:-6px 0}
+  .pill span{overflow:hidden;text-overflow:ellipsis}
+  .pill.plus{background:#fff;color:#0f6b2f;border:5px solid #1fa64a;box-shadow:0 6px 0 #127a35}
+  .pill.minus{background:#d32f2f;color:#fff;border:5px solid #ff8a80;box-shadow:0 6px 0 #8e1b1b,0 0 30px rgba(255,60,60,.55)}
+  .pill b{font-size:44px}
+
+  /* ---------- placares ---------- */
+  .boards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;padding:46px 20px 0;height:350px}
+  .board{min-width:0;position:relative;border-radius:28px;border:6px solid var(--c);background:linear-gradient(#141821,#0a0c11);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 30px 18px}
+  .board.shake{animation:shake .45s}
+  @keyframes shake{20%{transform:translateX(-14px)}40%{transform:translateX(12px)}60%{transform:translateX(-8px)}80%{transform:translateX(5px)}}
+  .lead{position:absolute;top:-28px;left:50%;transform:translateX(-50%);background:#ffd400;color:#3a2a00;font-size:30px;padding:8px 30px;border-radius:40px;
+    white-space:nowrap;opacity:0;transition:opacity .3s;box-shadow:0 4px 0 #b38f00;z-index:2}
+  .board.leader .lead{opacity:1}
+  .board.win .lead{background:#5dff8e;color:#063;box-shadow:0 4px 0 #1fa64a}
+  .pts{position:relative;font-size:130px;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+  .pts.pop{animation:pop .35s}
+  @keyframes pop{50%{transform:scale(1.12)}}
+  .lbl{color:var(--c);font-size:28px;letter-spacing:10px;margin-top:6px}
+  .meta{color:#9aa3b5;font:bold 24px Arial,sans-serif;margin-top:2px}
+  .bar{width:100%;height:30px;background:#222733;border-radius:20px;margin-top:16px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--c);border-radius:20px;transition:width .5s}
+  .float{position:absolute;left:50%;top:40%;transform:translateX(-50%);font-size:110px;color:#ff5252;-webkit-text-stroke:4px #fff;
+    pointer-events:none;animation:float 1.3s forwards;z-index:3;white-space:nowrap;display:flex;align-items:center}
+  .float.up{color:#5dff8e}
+  .float img{height:120px;margin-right:6px}
+  @keyframes float{0%{opacity:0;transform:translate(-50%,30px) scale(.6)}20%{opacity:1;transform:translate(-50%,0) scale(1.1)}100%{opacity:0;transform:translate(-50%,-160px) scale(1)}}
+
+  /* ---------- botões ---------- */
+  .stations{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;padding:26px 20px 0}
+  .station{min-width:0;border-radius:28px;background:linear-gradient(#20242e,#14171e);border:4px solid #2c3140;padding:18px 22px 24px;
+    display:flex;flex-direction:column;gap:16px}
+  .screen{height:150px;border-radius:18px;background:#0a0c11;border:4px solid var(--c);display:flex;align-items:center;justify-content:center;gap:16px;
+    color:#fff;font-size:76px;transition:background .2s,border-color .2s}
+  .screen img{height:120px}
+  .screen .idle{opacity:.25;font:bold 30px Arial,sans-serif;letter-spacing:4px}
+  .screen.plus{background:#0f3d1f;border-color:#5dff8e}
+  .screen.minus{background:#4a0d0d;border-color:#ff5252}
+  .screen.plus .v{color:#5dff8e}
+  .screen.minus .v{color:#ff6b6b}
+  .btns{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .btn{height:130px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:90px;color:#fff;
+    transition:transform .08s,box-shadow .08s,filter .08s}
+  .btn.g{background:linear-gradient(#36d26a,#1a9a46);box-shadow:0 12px 0 #0d6b2d}
+  .btn.r{background:linear-gradient(#ff5a5a,#c62828);box-shadow:0 12px 0 #7f1414}
+  .btn.on{transform:translateY(10px);filter:brightness(1.3)}
+  .btn.g.on{box-shadow:0 2px 0 #0d6b2d,0 0 50px #5dff8e}
+  .btn.r.on{box-shadow:0 2px 0 #7f1414,0 0 50px #ff5252}
+  .hand{position:absolute;font-size:150px;line-height:1;left:0;top:0;transition:left .24s ease,top .24s ease,transform .08s;
+    filter:drop-shadow(0 12px 10px rgba(0,0,0,.5));pointer-events:none;z-index:5}
+  .hand.fast{transition:left .1s ease,top .1s ease,transform .06s}
+  .hand.down{transform:scale(.9) translateY(12px)}
+
+  #status{position:absolute;top:14px;left:14px;font:bold 22px Arial,sans-serif;color:#fff;background:#b3261e;padding:6px 16px;border-radius:20px;display:none;z-index:10}
+
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="title"></div>
+
+  <section class="heads">
+    <div class="head" data-i="0"><div class="photo"></div><div class="nm"></div><div class="pills"></div></div>
+    <div class="head" data-i="1"><div class="photo"></div><div class="nm"></div><div class="pills"></div></div>
+    <div class="vs">X</div>
+  </section>
+
+  <section class="boards">
+    <div class="board" data-i="0"><div class="lead">👑 NA FRENTE</div><div class="pts">0</div><div class="lbl">PONTOS</div><div class="meta"></div><div class="bar"><i></i></div></div>
+    <div class="board" data-i="1"><div class="lead">👑 NA FRENTE</div><div class="pts">0</div><div class="lbl">PONTOS</div><div class="meta"></div><div class="bar"><i></i></div></div>
+  </section>
+
+  <section class="stations">
+    <div class="station" data-i="0"><div class="screen"></div><div class="btns"><div class="btn g">＋</div><div class="btn r">−</div></div></div>
+    <div class="station" data-i="1"><div class="screen"></div><div class="btns"><div class="btn g">＋</div><div class="btn r">−</div></div></div>
+  </section>
+
+  <div id="status">● conectando…</div>
+</div>
+
+<script>
+(() => {
+  /* Padrão só para a primeira tela / modo demo. Os ajustes de verdade vêm do servidor (painel /admin). */
+  const PADRAO = {
+    titulo: "QUEM VENCE O DUELO?", maximo: 100000, som: true, fundoTransparente: false,
+    lados: [{ nome: "LADO A", cor: "#1f6fff", foto: "" }, { nome: "LADO B", cor: "#e53935", foto: "" }],
+    regras: [
+      { presentes: "rosa branca", lado: 0, pontos: 1, icone: "rosabranca" },
+      { presentes: "rosquinha", lado: 0, pontos: -10, icone: "rosquinha" },
+      { presentes: "rosa", lado: 1, pontos: 1, icone: "rosa" },
+      { presentes: "capybara", lado: 1, pontos: -10, icone: "capybara" }
+    ]
+  };
+  const ICONES = { rosa: 1, rosabranca: 1, capybara: 1, rosquinha: 1 };
+  const MAX_FILA = 8;
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const norm = s => (s || "").toString().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const fmt = n => Number(n || 0).toLocaleString("pt-BR");
+  const params = new URLSearchParams(location.search);
+  const CACHE = "duelo-cache-v1";
+
+  function iconEl(ic) {
+    ic = (ic || "").trim();
+    const key = norm(ic).replace(/\s/g, "");
+    const src = ICONES[key] ? `${key}.png` : (/\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(ic) || /^https?:|^\//.test(ic) ? ic : "");
+    if (src) { const im = document.createElement("img"); im.src = src; im.alt = ""; return im; }
+    const sp = document.createElement("span"); sp.textContent = ic; return sp;
+  }
+
+  /* ---------- estado (vem do servidor; cache só para abrir rápido) ---------- */
+  let cfg = PADRAO, pts = [0, 0];
+  try { const c = JSON.parse(localStorage.getItem(CACHE)); if (c && c.cfg && c.pts) { cfg = c.cfg; pts = c.pts; } } catch (e) {}
+  const guardar = () => { try { localStorage.setItem(CACHE, JSON.stringify({ cfg, pts })); } catch (e) {} };
+
+  /* ---------- estações (tela + 2 botões + mão) ---------- */
+  const st = [0, 1].map(i => {
+    const el = $(`.station[data-i="${i}"]`);
+    const hand = document.createElement("div");
+    hand.className = "hand"; hand.textContent = "👆";
+    $(".stations").appendChild(hand);
+    return { el, hand, screen: $(".screen", el), g: $(".btn.g", el), r: $(".btn.r", el), queue: [], running: false };
+  });
+  function idleScreen(i) {
+    const s = st[i].screen; s.className = "screen"; s.innerHTML = "";
+    const d = document.createElement("span"); d.className = "idle"; d.textContent = "AGUARDANDO PRESENTE"; s.appendChild(d);
+  }
+
+  /* ---------- aplicar ajustes na tela ---------- */
+  let cfgAtual = "";
+  function applyCfg() {
+    const j = JSON.stringify(cfg);
+    if (j === cfgAtual) return;
+    cfgAtual = j;
+    document.body.classList.toggle("transp", !!cfg.fundoTransparente);
+    $(".title").textContent = cfg.titulo || "";
+    cfg.lados.forEach((L, i) => {
+      $$(`[data-i="${i}"]`).forEach(el => el.style.setProperty("--c", L.cor));
+      const head = $(`.head[data-i="${i}"]`);
+      $(".nm", head).textContent = L.nome;
+      const ph = $(".photo", head);
+      ph.style.backgroundImage = L.foto ? `url("${String(L.foto).replace(/"/g, "%22")}")` : "";
+      ph.textContent = L.foto ? "" : ((L.nome || "?").trim().split(" ").pop()[0] || "?").toUpperCase();
+      const pills = $(".pills", head); pills.innerHTML = "";
+      cfg.regras.filter(r => Number(r.lado) === i && Number(r.pontos) !== 0).sort((a, b) => b.pontos - a.pontos).slice(0, 3).forEach(r => {
+        const d = document.createElement("div");
+        d.className = "pill " + (r.pontos > 0 ? "plus" : "minus");
+        const v = document.createElement("b"); v.textContent = (r.pontos > 0 ? "+" : "−") + fmt(Math.abs(r.pontos));
+        const t = document.createElement("span"); t.textContent = (r.presentes || "").split(",")[0].trim();
+        d.append(v, iconEl(r.icone), t);
+        pills.appendChild(d);
+      });
+      if (!st[i].running) idleScreen(i);
+    });
+    render();
+  }
+
+  /* ---------- escala ---------- */
+  let scale = 1;
+  const stage = $("#stage");
+  function fit() {
+    scale = Math.min(innerWidth / 1080, innerHeight / 1920);
+    stage.style.transform = `scale(${scale})`;
+    stage.style.left = ((innerWidth - 1080 * scale) / 2) + "px";
+    st.forEach(restHand);
+  }
+  addEventListener("resize", fit);
+  addEventListener("orientationchange", () => setTimeout(fit, 300));
+
+  /* ---------- mão ---------- */
+  const TIP_X = 0.40, TIP_Y = 0.06;
+  function handTo(s, el, dy = 0) {
+    const cont = $(".stations").getBoundingClientRect(), r = el.getBoundingClientRect(), h = s.hand.getBoundingClientRect();
+    const x = (r.left + r.width / 2 - cont.left) / scale, y = (r.top + r.height / 2 - cont.top) / scale + dy;
+    s.hand.style.left = (x - (h.width / scale) * TIP_X) + "px";
+    s.hand.style.top = (y - (h.height / scale) * TIP_Y) + "px";
+  }
+  const restHand = s => handTo(s, s.el, 120);
+
+  async function animate(i, job, fast) {
+    const s = st[i], plus = job.delta >= 0;
+    s.screen.className = "screen"; s.screen.innerHTML = "";
+    const v = document.createElement("span"); v.className = "v";
+    v.textContent = (plus ? "+" : "−") + fmt(Math.abs(job.delta));
+    s.screen.append(iconEl(job.icone), v);
+    if (Math.abs(job.delta) > 9999) v.style.fontSize = "56px";
+    await sleep(fast ? 180 : 450);
+    const btn = plus ? s.g : s.r;
+    s.hand.classList.toggle("fast", fast);
+    handTo(s, btn);
+    await sleep(fast ? 120 : 260);
+    s.hand.classList.add("down"); btn.classList.add("on");
+    s.screen.classList.add(plus ? "plus" : "minus");
+    beep(plus ? 1400 : 300);
+    await sleep(fast ? 90 : 170);
+    s.hand.classList.remove("down"); btn.classList.remove("on");
+    await sleep(fast ? 220 : 650);
+  }
+  async function run(i) {
+    const s = st[i];
+    if (s.running) return;
+    s.running = true;
+    while (s.queue.length) { const job = s.queue.shift(); await animate(i, job, s.queue.length > 1); }
+    s.hand.classList.remove("fast"); restHand(s); idleScreen(i);
+    s.running = false;
+  }
+  function enqueue(i, job) {
+    const s = st[i];
+    if (s.queue.length < MAX_FILA) s.queue.push(job);
+    else { const last = s.queue[s.queue.length - 1]; if (Math.sign(last.delta) === Math.sign(job.delta) && last.icone === job.icone) last.delta += job.delta; }
+    run(i);
+  }
+
+  /* ---------- som ---------- */
+  let actx;
+  function beep(freq) {
+    if (!cfg.som) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = "square"; o.frequency.value = freq; g.gain.value = 0.06;
+      o.connect(g); g.connect(actx.destination);
+      const t = actx.currentTime;
+      o.start(t); g.gain.setValueAtTime(0.06, t + 0.25); g.gain.linearRampToValueAtTime(0, t + 0.3); o.stop(t + 0.32);
+    } catch (e) {}
+  }
+  addEventListener("pointerdown", () => { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch (e) {} }, { once: true });
+
+  /* ---------- placar ---------- */
+  function render(changed) {
+    const max = Number(cfg.maximo) || 100000;
+    const lead = pts[0] === pts[1] ? -1 : (pts[0] > pts[1] ? 0 : 1);
+    $$(".board").forEach((b, i) => {
+      const p = $(".pts", b);
+      p.textContent = fmt(pts[i]);
+      const L = p.textContent.length;
+      p.style.fontSize = (L <= 3 ? 130 : L <= 5 ? 120 : L <= 6 ? 104 : 90) + "px";
+      if (changed === i) { p.classList.remove("pop"); void p.offsetWidth; p.classList.add("pop"); }
+      $(".meta", b).textContent = "meta " + fmt(max);
+      $(".bar i", b).style.width = Math.min(100, pts[i] / max * 100) + "%";
+      const win = pts[i] >= max;
+      b.classList.toggle("win", win);
+      b.classList.toggle("leader", win || lead === i);
+      $(".lead", b).textContent = win ? "🏆 BATEU A META" : "👑 NA FRENTE";
+    });
+  }
+  function floatText(i, txt, up, icon) {
+    const b = $(`.board[data-i="${i}"]`);
+    const f = document.createElement("div");
+    f.className = "float" + (up ? " up" : "");
+    if (icon && !up) f.appendChild(iconEl(icon));
+    f.appendChild(document.createTextNode(txt));
+    b.appendChild(f); setTimeout(() => f.remove(), 1400);
+    if (!up) { b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake"); }
+  }
+  function jogada(d) {
+    const i = Number(d.lado) === 1 ? 1 : 0, delta = Number(d.delta) || 0;
+    if (Array.isArray(d.pts)) pts = d.pts;
+    render(i); guardar();
+    if (delta >= 0) { if (delta > 1) floatText(i, "+" + fmt(delta), true); }
+    else floatText(i, "−" + fmt(-delta), false, d.icone);
+    enqueue(i, { delta, icone: d.icone });
+  }
+
+  /* ---------- status ---------- */
+  const statusEl = $("#status");
+  function status(txt) { statusEl.textContent = "● " + txt; statusEl.style.display = txt ? "block" : "none"; }
+
+  /* ---------- conexão com o servidor (reconecta sozinho) ---------- */
+  let espera = 1000, hb = null;
+  function connect() {
+    if (params.has("demo")) return;
+    const url = `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`;
+    let ws;
+    try { ws = new WebSocket(url); } catch (e) { return setTimeout(connect, espera); }
+    ws.onopen = () => {
+      espera = 1000;
+      clearInterval(hb); hb = setInterval(() => { try { ws.send('{"t":"hb"}'); } catch (e) {} }, 30000);
+    };
+    ws.onclose = () => {
+      clearInterval(hb);
+      status("reconectando ao servidor…");
+      setTimeout(connect, espera); espera = Math.min(espera * 2, 10000);
+    };
+    ws.onerror = () => {};
+    ws.onmessage = e => {
+      let m; try { m = JSON.parse(e.data); } catch (_) { return; }
+      if (m.event === "estado") {
+        cfg = m.data.cfg; pts = m.data.pts; guardar(); applyCfg(); render();
+        status(m.data.live && !m.data.live.conectado ? m.data.live.msg : "");
+      } else if (m.event === "jogada") jogada(m.data);
+      else if (m.event === "status") status(m.data.conectado ? "" : m.data.msg);
+    };
+  }
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) fit(); });
+
+  /* ---------- modo demo (sem servidor): ?demo=1 ---------- */
+  if (params.has("demo")) {
+    cfg = PADRAO; pts = [0, 0]; status("");
+    setInterval(() => {
+      const r = cfg.regras[Math.floor(Math.random() * cfg.regras.length)];
+      const q = Math.random() < 0.2 ? 5 : 1, delta = r.pontos * q;
+      pts[r.lado] = Math.min(cfg.maximo, Math.max(0, pts[r.lado] + delta));
+      jogada({ lado: r.lado, delta, icone: r.icone, pts: pts.slice() });
+    }, 1300);
+  }
+
+  applyCfg(); fit(); render(); connect();
+})();
+</script>
+</body>
+</html>
